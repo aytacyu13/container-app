@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+  app1:
+    container_name: app1
+    image: app
+    networks:
+      appnet:
+        ipv4_address: 172.20.0.100
+
+  app2:
+    container_name: app2
+    image: app
+    networks:
+      appnet:
+        ipv4_address: 172.20.0.101
+
+  lb:
+    container_name: lb
+    image: lb
+    ports:
+       - "8080:8080"
+    networks:
+      appnet:
+        ipv4_address: 172.20.0.10
+
+  db:
+    container_name: db
+    image: mysql:5.7
+    networks:
+      appnet:
+        ipv4_address: 172.20.0.200
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD="true"
+    volumes:
+      - ~/test_folder/container-app/db:/var/lib/mysql
+
+networks:
+  appnet:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.20.0.0/24
+        gateway: 172.20.0.1
+
